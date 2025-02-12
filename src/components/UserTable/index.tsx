@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useUserStore } from '../../store/useUserStore'
 import { FaPen, FaPlus, FaTrash } from 'react-icons/fa'
 import AddUser from '../AddUserModal'
@@ -26,9 +26,12 @@ export default function UserTable() {
     error,
   } = useUserStore()
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
+ useEffect(() => {
+   if (!users.length) {
+     fetchUsers()
+   }
+ }, [users.length, fetchUsers])
+
 
   const [openTooltip, setOpenTooltip] = useState<number | null>(null)
 
@@ -36,12 +39,16 @@ export default function UserTable() {
   // Calculate total pages
   const totalPages = Math.ceil(users.length / itemsPerPage)
 
-  const filteredUsers = users.reverse().filter(
-    (user) =>
-      user.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredUsers = useMemo(() => {
+    return users
+      .slice() 
+      .filter(
+        (user) =>
+          user.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  }, [users, searchQuery])
 
   // Apply pagination after filtering
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -51,11 +58,10 @@ export default function UserTable() {
   )
 
   // handling the tooltip
-   
-
-  const toggleTooltip = (userId: number) => {
+  const toggleTooltip = useCallback((userId: number) => {
     setOpenTooltip((prev) => (prev === userId ? null : userId))
-  }
+  }, [])
+
 
 
 

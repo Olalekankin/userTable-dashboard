@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { FaTimes } from 'react-icons/fa'
 
 interface ModalProps {
@@ -15,6 +15,14 @@ const Modal: React.FC<ModalProps> = ({
   children,
 }) => {
   if (!isOpen) return null 
+// Close modal on the press of escape key
+   useEffect(() => {
+     const handleKeyDown = (event: KeyboardEvent) => {
+       if (event.key === 'Escape') closeModal()
+     }
+     document.addEventListener('keydown', handleKeyDown)
+     return () => document.removeEventListener('keydown', handleKeyDown)
+   }, [closeModal])
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-[#00000063]'>

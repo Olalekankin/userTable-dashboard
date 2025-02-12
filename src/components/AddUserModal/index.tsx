@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useUserStore } from '../../store/useUserStore'
 import Modal from '../Modal'
 
@@ -13,16 +13,22 @@ const AddUser = () => {
     phone: '',
   })
 
-  // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value })
-  }
+  // Handle form input change 
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setNewUser((prev) => ({ ...prev, [name]: value }))
+  }, [])
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault() 
-    handleAddUser(newUser) 
-  }
+  // Handle form submission 
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (!loading) {
+        handleAddUser(newUser)
+      }
+    },
+    [handleAddUser, newUser, loading]
+  )
 
   return (
     <Modal
@@ -31,47 +37,26 @@ const AddUser = () => {
       title='Add New User'
     >
       <form onSubmit={handleSubmit}>
-        <input
-          type='text'
-          name='firstname'
-          required
-          placeholder='First name'
-          value={newUser.firstname}
-          onChange={handleChange}
-          className='w-full border p-2 mb-4 rounded-md'
-        />
-        <input
-          type='text'
-          name='lastname'
-          required
-          placeholder='Last name'
-          value={newUser.lastname}
-          onChange={handleChange}
-          className='w-full border p-2 mb-4 rounded-md'
-        />
-        <input
-          type='email'
-          name='email'
-          required
-          placeholder='Email'
-          value={newUser.email}
-          onChange={handleChange}
-          className='w-full border p-2 mb-4 rounded-md'
-        />
-        <input
-          type='text'
-          name='phone'
-          required
-          placeholder='Phone'
-          value={newUser.phone}
-          onChange={handleChange}
-          className='w-full border p-2 mb-8 rounded-md'
-        />
+        {['firstname', 'lastname', 'email', 'phone'].map((field) => (
+          <input
+            key={field}
+            type={field === 'email' ? 'email' : 'text'}
+            name={field}
+            required
+            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+            value={newUser[field as keyof typeof newUser]}
+            onChange={handleChange}
+            className='w-full border p-2 mb-4 rounded-md'
+          />
+        ))}
         <button
           type='submit'
-          className='bg-[#11497e] text-white px-4 py-2 rounded-md w-full mt-2'
+          disabled={loading}
+          className={`bg-[#11497e] text-white px-4 py-2 rounded-md w-full mt-2 ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          {loading ? <span className='loader'></span> : <span>Add User</span>}
+          {loading ? <span className='loader'></span> : 'Add User'}
         </button>
       </form>
     </Modal>
