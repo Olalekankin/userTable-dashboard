@@ -30,6 +30,9 @@ This is a **Mini Dashboard** that displays user data in a table format, allowing
 - **[Axios](https://axios-http.com/):** Asynchronous data fetching.
 - **[Helmet](https://www.npmjs.com/package/react-helmet):** SEO optimization and dynamic page titles.
 
+## Fully Deployed on Vercel
+- **[User table mini dashboard](https://user-table-dashboard.vercel.app/)
+
 ## Getting Started
 ### **Installation & Setup**
 
