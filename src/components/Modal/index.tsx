@@ -18,7 +18,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-[#00000063]'>
-      <div className='bg-white w-full max-w-md p-6 rounded-lg shadow-lg'>
+      <div className='bg-white w-full max-w-sm md:max-w-md p-6 rounded-lg shadow-lg'>
         <div className='flex justify-between items-center'>
           <h2 className='text-lg font-semibold'>{title}</h2>
           <button
